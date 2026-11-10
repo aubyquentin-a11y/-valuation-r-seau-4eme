@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-slate-900 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Technologie 4ème - Coder une Information</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Font Family -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .pixel-grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; }
+        .pixel-cell { aspect-ratio: 1; border: 1px solid #475569; }
+        .pixel-active { background-color: #38bdf8; }
+    </style>
+</head>
+<body class="h-full flex flex-col justify-between bg-slate-900 selection:bg-cyan-500 selection:text-white">
+
+    <!-- Header Navbar -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="p-2 bg-gradient-to-tr from-cyan-500 to-blue-600 rounded-xl text-white shadow-lg shadow-cyan-500/20">
+                    <i data-lucide="cpu" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight text-white">TechnoFlash 4<sup>ème</sup></h1>
+                    <p class="text-xs text-slate-400">Évaluation : Coder une information & Réseaux</p>
+                </div>
+            </div>
+
+            <!-- Quiz Status Tracker -->
+            <div id="quiz-status" class="hidden items-center space-x-6">
+                <div class="flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700/50">
+                    <i data-lucide="clock" class="w-4 h-4 text-cyan-400"></i>
+                    <span id="timer-display" class="font-mono text-sm font-semibold text-cyan-300">00:00</span>
+                </div>
+                <div class="flex items-center space-x-2 bg-slate-800/80 px-3 py-1.5 rounded-lg border border-slate-700/50">
+                    <i data-lucide="trophy" class="w-4 h-4 text-amber-400"></i>
+                    <span id="score-live" class="font-mono text-sm font-semibold text-amber-300">0 pts</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow flex items-center justify-center p-4">
+        <div class="w-full max-w-3xl">
+
+            <!-- Welcome Screen -->
+            <div id="screen-welcome" class="bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 md:p-8 backdrop-blur shadow-2xl space-y-6">
+                <div class="text-center space-y-3">
+                    <span class="px-3 py-1 bg-cyan-500/10 text-cyan-400 text-xs font-semibold rounded-full border border-cyan-500/20">
+                        Technologie 4ème • Séquence Réseaux & Logique
+                    </span>
+                    <h2 class="text-3xl md:text-4xl font-extrabold text-white tracking-tight">
+                        Test Interactif de Connaissances
+                    </h2>
+                    <p class="text-slate-400 text-sm md:text-base max-w-xl mx-auto">
+                        Évalue tes compétences sur le système binaire, la configuration des adresses IP, les portes logiques et la transmission de trames de données.
+                    </p>
+                </div>
+
+                <!-- Theme Summary Cards -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 py-2">
+                    <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/40 text-center">
+                        <i data-lucide="binary" class="w-6 h-6 mx-auto mb-1 text-cyan-400"></i>
+                        <span class="text-xs font-medium text-slate-300 block">1. Système Binaire</span>
+                        <span class="text-[10px] text-slate-500">4 Questions</span>
+                    </div>
+                    <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/40 text-center">
+                        <i data-lucide="network" class="w-6 h-6 mx-auto mb-1 text-emerald-400"></i>
+                        <span class="text-xs font-medium text-slate-300 block">2. Adresses IP</span>
+                        <span class="text-[10px] text-slate-500">4 Questions</span>
+                    </div>
+                    <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/40 text-center">
+                        <i data-lucide="git-fork" class="w-6 h-6 mx-auto mb-1 text-violet-400"></i>
+                        <span class="text-xs font-medium text-slate-300 block">3. Portes Logiques</span>
+                        <span class="text-[10px] text-slate-500">4 Questions</span>
+                    </div>
+                    <div class="bg-slate-800/80 p-3 rounded-xl border border-slate-700/40 text-center">
+                        <i data-lucide="activity" class="w-6 h-6 mx-auto mb-1 text-amber-400"></i>
+                        <span class="text-xs font-medium text-slate-300 block">4. Trames & Signal</span>
+                        <span class="text-[10px] text-slate-500">4 Questions</span>
+                    </div>
+                </div>
+
+                <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-800 space-y-2 text-xs text-slate-400">
+                    <div class="flex items-center space-x-2">
+                        <i data-lucide="info" class="w-4 h-4 text-cyan-400 shrink-0"></i>
+                        <span><strong>Modalités :</strong> 16 questions à choix multiples avec explications détaillées après chaque réponse.</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <i data-lucide="timer" class="w-4 h-4 text-cyan-400 shrink-0"></i>
+                        <span><strong>Chrono :</strong> Temps indicatif de 15-20 minutes.</span>
+                    </div>
+                </div>
+
+                <button id="btn-start" class="w-full py-3.5 px-6 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold rounded-xl shadow-lg shadow-cyan-500/25 transition-all duration-200 flex items-center justify-center space-x-2 text-base">
+                    <span>Démarrer l'Évaluation</span>
+                    <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                </button>
+            </div>
+
+            <!-- Quiz Screen -->
+            <div id="screen-quiz" class="hidden space-y-4">
+                
+                <!-- Question Header Progress Bar -->
+                <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700/50 space-y-2">
+                    <div class="flex justify-between items-center text-xs text-slate-400">
+                        <span id="question-category" class="font-semibold text-cyan-400">Catégorie</span>
+                        <span id="question-count">Question 1 / 16</span>
+                    </div>
+                    <div class="w-full bg-slate-700/50 rounded-full h-2 overflow-hidden">
+                        <div id="progress-bar" class="bg-gradient-to-r from-cyan-500 to-blue-500 h-full w-0 transition-all duration-300"></div>
+                    </div>
+                </div>
+
+                <!-- Main Question Card -->
+                <div class="bg-slate-800/60 border border-slate-700/60 rounded-2xl p-6 backdrop-blur shadow-xl space-y-6">
+                    
+                    <div class="space-y-3">
+                        <h3 id="question-text" class="text-lg md:text-xl font-bold text-white leading-relaxed">
+                            Intitulé de la question
+                        </h3>
+                        <!-- Optional Media/Visual Box -->
+                        <div id="question-media" class="hidden p-4 bg-slate-900/80 rounded-xl border border-slate-700/50"></div>
+                    </div>
+
+                    <!-- Answer Options Grid -->
+                    <div id="options-container" class="grid grid-cols-1 gap-3">
+                        <!-- Options generated dynamically -->
+                    </div>
+
+                    <!-- Feedback & Explanation Box -->
+                    <div id="feedback-box" class="hidden p-4 rounded-xl border transition-all duration-200 space-y-2">
+                        <div class="flex items-center space-x-2 font-bold text-sm" id="feedback-title"></div>
+                        <p id="feedback-text" class="text-xs md:text-sm text-slate-300 leading-relaxed"></p>
+                    </div>
+
+                    <!-- Action Bar -->
+                    <div class="flex justify-between items-center pt-2">
+                        <div class="text-xs text-slate-500">
+                            Barème : <span id="question-pts" class="text-slate-300 font-semibold">1 pt</span>
+                        </div>
+                        <button id="btn-next" disabled class="py-2.5 px-5 bg-slate-700 text-slate-400 font-semibold rounded-xl transition-all duration-200 flex items-center space-x-2 text-sm opacity-50 cursor-not-allowed">
+                            <span>Question suivante</span>
+                            <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Result Screen -->
+            <div id="screen-result" class="hidden bg-slate-800/50 border border-slate-700/60 rounded-2xl p-6 md:p-8 backdrop-blur shadow-2xl space-y-6 text-center">
+                
+                <div class="inline-flex p-4 bg-gradient-to-tr from-cyan-500/20 to-blue-500/20 rounded-full border border-cyan-500/30 mb-2">
+                    <i data-lucide="award" class="w-12 h-12 text-cyan-400"></i>
+                </div>
+
+                <div class="space-y-2">
+                    <h2 class="text-3xl font-extrabold text-white">Résultat de l'Évaluation</h2>
+                    <p class="text-slate-400 text-sm">Voici le récapitulatif de tes performances par exercice</p>
+                </div>
+
+                <!-- Final Score Display -->
+                <div class="bg-slate-900/70 p-6 rounded-2xl border border-slate-800 max-w-sm mx-auto">
+                    <div class="text-slate-400 text-xs font-medium uppercase tracking-wider mb-1">Note globale</div>
+                    <div class="text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500" id="final-score">
+                        0 / 20
+                    </div>
+                    <div id="final-grade-text" class="text-xs text-cyan-300 mt-2 font-medium">--</div>
+                </div>
+
+                <!-- Category Breakdown -->
+                <div id="category-breakdown" class="grid grid-cols-1 md:grid-cols-2 gap-3 text-left">
+                    <!-- Dynamic breakdown -->
+                </div>
+
+                <div class="pt-4 flex flex-col sm:flex-row gap-3">
+                    <button id="btn-restart" class="flex-1 py-3 px-4 bg-slate-700 hover:bg-slate-600 text-white font-semibold rounded-xl transition-all flex items-center justify-center space-x-2 text-sm">
+                        <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                        <span>Recommencer le quiz</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 py-4 bg-slate-900">
+        <div class="max-w-5xl mx-auto px-4 text-center text-xs text-slate-500">
+            Support pédagogique de Technologie 4<sup>ème</sup> — Exercices interactifs & Réseaux.
+        </div>
+    </footer>
+
+    <script>
+        // Data Questions Bank (16 Questions)
+        const questionsData = [
+            // EXERCICE 1: SYSTEME BINAIRE (4 Qs)
+            {
+                category: "Exercice 1 : Système Binaire",
+                text: "Qu'est-ce qu'un octet en informatique ?",
+                options: [
+                    "Une unité de mesure correspondant à 1 seul bit (0 ou 1).",
+                    "Un ensemble de 8 bits consécutifs.",
+                    "La vitesse maximale de transmission d'un câble réseau.",
+                    "Un code binaire composé uniquement de 1."
+                ],
+                correct: 1,
+                explanation: "Un octet est un groupe de 8 bits. Un bit est la plus petite unité d'information (0 ou 1). 1 octet permet de coder 256 valeurs différentes (de 0 à 255).",
+                pts: 1
+            },
+            {
+                category: "Exercice 1 : Système Binaire",
+                text: "Quelle est la valeur binaire (sur 8 bits) du nombre décimal 13 ?",
+                options: [
+                    "00001011",
+                    "00001101",
+                    "00001110",
+                    "00010001"
+                ],
+                correct: 1,
+                explanation: "13 en binaire : 8 + 4 + 1 = 2³ + 2² + 2⁰. En plaçant des 1 dans le tableau des puissances de 2 (128, 64, 32, 16, 8, 4, 2, 1), on obtient 00001101.",
+                pts: 1.5
+            },
+            {
+                category: "Exercice 1 : Système Binaire",
+                text: "Convertis le nombre binaire 10010011 en nombre décimal.",
+                options: [
+                    "147",
+                    "131",
+                    "163",
+                    "195"
+                ],
+                correct: 0,
+                explanation: "10010011 = 128 + 0 + 0 + 16 + 0 + 0 + 2 + 1 = 147.",
+                pts: 1.5
+            },
+            {
+                category: "Exercice 1 : Système Binaire",
+                text: "Quelle est la valeur décimale maximale que l'on peut coder avec un octet (8 bits) ?",
+                options: [
+                    "128",
+                    "255",
+                    "256",
+                    "512"
+                ],
+                correct: 1,
+                explanation: "Le plus grand nombre binaire sur 8 bits est 11111111 = 128 + 64 + 32 + 16 + 8 + 4 + 2 + 1 = 255. (Il y a 256 possibilités en comptant le 0).",
+                pts: 1
+            },
+
+            // EXERCICE 2: ADRESSES IP ET RESEAUX (4 Qs)
+            {
+                category: "Exercice 2 : Adresses IP & Réseaux",
+                text: "Convertis le premier octet de l'adresse IP 180.13.72.2 en binaire.",
+                options: [
+                    "10110100",
+                    "10110010",
+                    "11000100",
+                    "10101100"
+                ],
+                correct: 0,
+                explanation: "180 se décompose en : 128 + 32 + 16 + 4 = 10110100 (bits activés aux positions 128, 32, 16 et 4).",
+                pts: 1.5
+            },
+            {
+                category: "Exercice 2 : Adresses IP & Réseaux",
+                text: "Un ordinateur possède l'adresse IP 192.168.1.20 et le masque 255.255.255.0. Quelle est l'adresse d'identification du réseau ?",
+                options: [
+                    "192.168.1.0",
+                    "192.168.0.0",
+                    "1.20",
+                    "255.255.255.0"
+                ],
+                correct: 0,
+                explanation: "Le masque 255.255.255.0 indique que les 3 premiers octets identifient le réseau. L'adresse réseau est donc 192.168.1.0.",
+                pts: 1.5
+            },
+            {
+                category: "Exercice 2 : Adresses IP & Réseaux",
+                text: "Dans le réseau précédent (IP 192.168.1.20, Masque 255.255.255.0), quel numéro identifie la machine (l'hôte) ?",
+                options: [
+                    "192",
+                    "168",
+                    "1",
+                    "20"
+                ],
+                correct: 3,
+                explanation: "Les 3 premiers octets (255.255.255) bloquent la partie réseau. Le dernier octet (0) correspond à l'adresse spécifique de l'ordinateur, soit 20.",
+                pts: 1
+            },
+            {
+                category: "Exercice 2 : Adresses IP & Réseaux",
+                text: "Pourquoi le ping entre l'ordinateur 192.168.0.1 (masque 255.255.255.0) et 192.168.1.2 échoue-t-il s'il n'y a pas de routeur ?",
+                options: [
+                    "Le câble réseau est obligatoirement débranché.",
+                    "Ils n'ont pas la même adresse réseau (192.168.0 vs 192.168.1).",
+                    "Le masque de sous-réseau est incorrect.",
+                    "Les adresses IP doivent toujours être identiques."
+                ],
+                correct: 1,
+                explanation: "Deux machines ne peuvent dialoguer directement sans routeur que si elles appartiennent au même réseau local (ici 192.168.0.x vs 192.168.1.x).",
+                pts: 2
+            },
+
+            // EXERCICE 3: PORTES LOGIQUES (4 Qs)
+            {
+                category: "Exercice 3 : Portes Logiques",
+                text: "Quelle est la sortie S d'une porte ET lorsque l'entrée a = 1 et l'entrée b = 0 ?",
+                options: [
+                    "S = 1",
+                    "S = 0",
+                    "S = Indéterminé",
+                    "S = -1"
+                ],
+                correct: 1,
+                explanation: "Pour une porte ET (AND), la sortie S vaut 1 SEULEMENT si TOUTES les entrées sont à 1. Ici a=1 et b=0, donc S = 0.",
+                pts: 1
+            },
+            {
+                category: "Exercice 3 : Portes Logiques",
+                text: "Quelle est la table de vérité exacte d'une porte OU (OR) à deux entrées (a, b) ?",
+                options: [
+                    "0, 0, 0, 1",
+                    "0, 1, 1, 1",
+                    "1, 0, 0, 0",
+                    "1, 1, 1, 0"
+                ],
+                correct: 1,
+                explanation: "La porte OU renvoie 1 dès qu'au moins une des deux entrées vaut 1. Pour les combinaisons (00, 01, 10, 11), les sorties sont respectivement 0, 1, 1, 1.",
+                pts: 1
+            },
+            {
+                category: "Exercice 3 : Portes Logiques",
+                text: "Un montage possède l'équation logique : S = (a ET b) OU c. Que vaut S si a = 1, b = 0 et c = 1 ?",
+                options: [
+                    "S = 0",
+                    "S = 1",
+                    "S = 2",
+                    "S = Indéfini"
+                ],
+                correct: 1,
+                explanation: "Étape 1 : (a ET b) = (1 ET 0) = 0. Étape 2 : 0 OU c = 0 OU 1 = 1. La sortie S vaut donc 1.",
+                pts: 1.5
+            },
+            {
+                category: "Exercice 3 : Portes Logiques",
+                text: "Dans un circuit électronique numérique standard, quel niveau de tension représente généralement l'état logique 1 ?",
+                options: [
+                    "0 Volt",
+                    "5 Volts (ou 3.3V)",
+                    "-5 Volts",
+                    "230 Volts"
+                ],
+                correct: 1,
+                explanation: "Dans les circuits numériques (TTL / CMOS), l'état logique 0 correspond à 0V (masse) et l'état logique 1 correspond à la tension d'alimentation (5V ou 3.3V).",
+                pts: 0.5
+            },
+
+            // EXERCICE 4: TRAMES DE DONNEES & CHRONOGRAMMES (4 Qs)
+            {
+                category: "Exercice 4 : Trames & Chronogrammes",
+                text: "Si une trame est transmise avec le sens de lecture 'de droite à gauche', quel bit est transmis EN PREMIER ?",
+                options: [
+                    "Le bit le plus à gauche (MSB).",
+                    "Le bit le plus à droite (LSB).",
+                    "Le bit du milieu.",
+                    "Tous les bits en même temps."
+                ],
+                correct: 1,
+                explanation: "Dans une lecture de droite à gauche, le temps s'écoule vers la gauche. La donnée arrivée la première est donc le bit situé le plus à droite du tableau.",
+                pts: 1
+            },
+            {
+                category: "Exercice 4 : Trames & Chronogrammes",
+                text: "Sur un chronogramme, l'axe vertical représente la grandeur physique et l'axe horizontal représente le temps. Pour une transmission optique (fibre), qu'associe-t-on au niveau haut (1) ?",
+                options: [
+                    "Lumière faible / éteinte",
+                    "Lumière forte / allumée",
+                    "Temps nul",
+                    "Fréquence nulle"
+                ],
+                correct: 1,
+                explanation: "Dans une trame optique, un signal haut (1) correspond à une impulsion lumineuse (lumière forte/allumée), tandis qu'un niveau bas (0) correspond à une absence de lumière ou lumière faible.",
+                pts: 1
+            },
+            {
+                category: "Exercice 4 : Trames & Chronogrammes",
+                text: "Observe cet octet binaire : 01101001 (lecture standard de gauche à droite). Combien de fois le signal passe-t-il au niveau HAUT (1) ?",
+                options: [
+                    "3 fois",
+                    "4 fois",
+                    "5 fois",
+                    "2 fois"
+                ],
+                correct: 1,
+                explanation: "Dans 01101001, il y a quatre '1' (aux positions 2, 3, 5 et 8). Le signal sera donc au niveau haut 4 fois.",
+                pts: 1
+            },
+            {
+                category: "Exercice 4 : Trames & Chronogrammes",
+                text: "Le premier octet de l'adresse 180.13.72.2 est 10110100. Quel est son chronogramme de gauche à droite ?",
+                options: [
+                    "Haut, Bas, Haut, Haut, Bas, Haut, Bas, Bas",
+                    "Bas, Haut, Bas, Bas, Haut, Bas, Haut, Haut",
+                    "Haut, Haut, Bas, Bas, Haut, Bas, Haut, Bas",
+                    "Bas, Bas, Haut, Haut, Bas, Haut, Bas, Haut"
+                ],
+                correct: 0,
+                explanation: "En lisant 10110100 de gauche à droite : 1=Haut, 0=Bas, 1=Haut, 1=Haut, 0=Bas, 1=Haut, 0=Bas, 0=Bas.",
+                pts: 2
+            }
+        ];
+
+        // App State Variables
+        let currentQuestionIdx = 0;
+        let score = 0;
+        let totalPossiblePts = 0;
+        let selectedOption = null;
+        let timerSeconds = 0;
+        let timerInterval = null;
+        let categoryScores = {};
+
+        // DOM Elements
+        const screenWelcome = document.getElementById('screen-welcome');
+        const screenQuiz = document.getElementById('screen-quiz');
+        const screenResult = document.getElementById('screen-result');
+        
+        const btnStart = document.getElementById('btn-start');
+        const btnNext = document.getElementById('btn-next');
+        const btnRestart = document.getElementById('btn-restart');
+
+        const quizStatus = document.getElementById('quiz-status');
+        const timerDisplay = document.getElementById('timer-display');
+        const scoreLive = document.getElementById('score-live');
+
+        const questionCategory = document.getElementById('question-category');
+        const questionCount = document.getElementById('question-count');
+        const progressBar = document.getElementById('progress-bar');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const feedbackBox = document.getElementById('feedback-box');
+        const feedbackTitle = document.getElementById('feedback-title');
+        const feedbackText = document.getElementById('feedback-text');
+        const questionPts = document.getElementById('question-pts');
+
+        // Initialize Lucide Icons
+        lucide.createIcons();
+
+        // Calculate max score
+        totalPossiblePts = questionsData.reduce((acc, q) => acc + q.pts, 0);
+
+        // Event Listeners
+        btnStart.addEventListener('click', startQuiz);
+        btnNext.addEventListener('click', nextQuestion);
+        btnRestart.addEventListener('click', restartQuiz);
+
+        // Start Quiz Function
+        function startQuiz() {
+            screenWelcome.classList.add('hidden');
+            screenQuiz.classList.remove('hidden');
+            quizStatus.classList.remove('hidden');
+            quizStatus.classList.add('flex');
+
+            currentQuestionIdx = 0;
+            score = 0;
+            timerSeconds = 0;
+            
+            // Initialize category scores tracker
+            categoryScores = {};
+            questionsData.forEach(q => {
+                if (!categoryScores[q.category]) {
+                    categoryScores[q.category] = { score: 0, total: 0 };
+                }
+                categoryScores[q.category].total += q.pts;
+            });
+
+            startTimer();
+            loadQuestion();
+        }
+
+        // Timer Control
+        function startTimer() {
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                timerSeconds++;
+                const mins = String(Math.floor(timerSeconds / 60)).padStart(2, '0');
+                const secs = String(timerSeconds % 60).padStart(2, '0');
+                timerDisplay.textContent = `${mins}:${secs}`;
+            }, 1000);
+        }
+
+        // Load Question Function
+        function loadQuestion() {
+            const q = questionsData[currentQuestionIdx];
+            selectedOption = null;
+
+            // Update UI elements
+            questionCategory.textContent = q.category;
+            questionCount.textContent = `Question ${currentQuestionIdx + 1} / ${questionsData.length}`;
+            progressBar.style.width = `${((currentQuestionIdx + 1) / questionsData.length) * 100}%`;
+            questionText.textContent = q.text;
+            questionPts.textContent = `${q.pts} pt${q.pts > 1 ? 's' : ''}`;
+
+            // Reset feedback
+            feedbackBox.classList.add('hidden');
+            feedbackBox.className = "hidden p-4 rounded-xl border transition-all duration-200 space-y-2";
+            
+            // Reset Next Button
+            btnNext.disabled = true;
+            btnNext.className = "py-2.5 px-5 bg-slate-700 text-slate-400 font-semibold rounded-xl transition-all duration-200 flex items-center space-x-2 text-sm opacity-50 cursor-not-allowed";
+
+            // Render Options
+            optionsContainer.innerHTML = '';
+            q.options.forEach((optText, idx) => {
+                const optBtn = document.createElement('button');
+                optBtn.className = "option-btn w-full p-4 rounded-xl border border-slate-700/70 bg-slate-800/40 hover:bg-slate-700/50 hover:border-slate-500 text-left transition-all duration-150 flex items-center justify-between group";
+                optBtn.onclick = () => selectOption(idx);
+
+                optBtn.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <span class="w-7 h-7 rounded-lg bg-slate-700 text-slate-300 group-hover:bg-cyan-500 group-hover:text-white flex items-center justify-center font-bold text-xs transition-colors">
+                            ${String.fromCharCode(65 + idx)}
+                        </span>
+                        <span class="text-sm font-medium text-slate-200">${optText}</span>
+                    </div>
+                    <div class="opt-icon"></div>
+                `;
+                optionsContainer.appendChild(optBtn);
+            });
+        }
+
+        // Handle Option Selection
+        function selectOption(optIdx) {
+            if (selectedOption !== null) return; // Prevent changing choice after selection
+            selectedOption = optIdx;
+
+            const q = questionsData[currentQuestionIdx];
+            const isCorrect = optIdx === q.correct;
+
+            // Update Score
+            if (isCorrect) {
+                score += q.pts;
+                categoryScores[q.category].score += q.pts;
+            }
+            scoreLive.textContent = `${score} / ${totalPossiblePts} pts`;
+
+            // Highlight Options
+            const buttons = optionsContainer.querySelectorAll('.option-btn');
+            buttons.forEach((btn, idx) => {
+                btn.onclick = null; // Disable further clicks
+                if (idx === q.correct) {
+                    btn.className = "w-full p-4 rounded-xl border-2 border-emerald-500 bg-emerald-500/10 text-left flex items-center justify-between";
+                    btn.querySelector('.opt-icon').innerHTML = `<i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-400"></i>`;
+                } else if (idx === optIdx && !isCorrect) {
+                    btn.className = "w-full p-4 rounded-xl border-2 border-rose-500 bg-rose-500/10 text-left flex items-center justify-between";
+                    btn.querySelector('.opt-icon').innerHTML = `<i data-lucide="x-circle" class="w-5 h-5 text-rose-400"></i>`;
+                } else {
+                    btn.className = "w-full p-4 rounded-xl border border-slate-800 bg-slate-900/30 opacity-40 text-left flex items-center justify-between";
+                }
+            });
+
+            // Show Feedback Box
+            feedbackBox.classList.remove('hidden');
+            if (isCorrect) {
+                feedbackBox.classList.add('bg-emerald-500/10', 'border-emerald-500/30');
+                feedbackTitle.className = "flex items-center space-x-2 font-bold text-sm text-emerald-400";
+                feedbackTitle.innerHTML = `<i data-lucide="check" class="w-4 h-4"></i><span>Excellente réponse ! (+${q.pts} pt)</span>`;
+            } else {
+                feedbackBox.classList.add('bg-rose-500/10', 'border-rose-500/30');
+                feedbackTitle.className = "flex items-center space-x-2 font-bold text-sm text-rose-400";
+                feedbackTitle.innerHTML = `<i data-lucide="alert-circle" class="w-4 h-4"></i><span>Réponse incorrecte</span>`;
+            }
+            feedbackText.textContent = q.explanation;
+            lucide.createIcons();
+
+            // Enable Next Button
+            btnNext.disabled = false;
+            btnNext.className = "py-2.5 px-5 bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-semibold rounded-xl shadow-lg shadow-cyan-500/20 transition-all duration-200 flex items-center space-x-2 text-sm cursor-pointer";
+        }
+
+        // Next Question Handler
+        function nextQuestion() {
+            currentQuestionIdx++;
+            if (currentQuestionIdx < questionsData.length) {
+                loadQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        // Finish Quiz & Show Results
+        function finishQuiz() {
+            clearInterval(timerInterval);
+            screenQuiz.classList.add('hidden');
+            screenResult.classList.remove('hidden');
+
+            const finalNote20 = ((score / totalPossiblePts) * 20).toFixed(1);
+            document.getElementById('final-score').textContent = `${finalNote20} / 20`;
+
+            const gradeText = document.getElementById('final-grade-text');
+            if (finalNote20 >= 16) {
+                gradeText.textContent = "🏆 Excellent travail ! Les notions sont parfaitement assimilées.";
+            } else if (finalNote20 >= 12) {
+                gradeText.textContent = "👍 Bon travail ! Quelques révisions légères permettront la perfection.";
+            } else if (finalNote20 >= 10) {
+                gradeText.textContent = "⚓ Résultat satisfaisant. Revois les exercices où tu as eu des erreurs.";
+            } else {
+                gradeText.textContent = "⚠️ Des notions sont à revoir. N'hésite pas à refaire le quiz !";
+            }
+
+            // Populate Breakdown
+            const breakdownContainer = document.getElementById('category-breakdown');
+            breakdownContainer.innerHTML = '';
+
+            Object.keys(categoryScores).forEach(catName => {
+                const data = categoryScores[catName];
+                const pct = Math.round((data.score / data.total) * 100);
+
+                const item = document.createElement('div');
+                item.className = "p-3.5 bg-slate-900/60 rounded-xl border border-slate-800 flex items-center justify-between";
+                item.innerHTML = `
+                    <div>
+                        <div class="text-xs font-medium text-slate-300">${catName}</div>
+                        <div class="text-[10px] text-slate-500">${data.score} / ${data.total} pts</div>
+                    </div>
+                    <div class="text-right">
+                        <span class="font-mono text-sm font-bold ${pct >= 70 ? 'text-emerald-400' : pct >= 50 ? 'text-amber-400' : 'text-rose-400'}">${pct}%</span>
+                    </div>
+                `;
+                breakdownContainer.appendChild(item);
+            });
+        }
+
+        // Restart Quiz
+        function restartQuiz() {
+            screenResult.classList.add('hidden');
+            startQuiz();
+        }
+    </script>
+</body>
+</html>
